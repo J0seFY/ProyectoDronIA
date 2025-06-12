@@ -1,17 +1,23 @@
-# programa 
-
+from djitellopy import Tello
 import cv2
 from ultralytics import YOLO
 
-# cargar el modelo entrenado
+# Cargar el modelo entrenado
 model = YOLO('runs/detect/gestos_manos/weights/best.pt')
 
-# Abrir la camara
-cap = cv2.VideoCapture(0)
+# Inicializar el dron Tello
+tello = Tello()
+tello.connect()
 
+print("Bateria:", tello.get_battery())
+
+# Iniciar la transmisión de video
+tello.streamon()
+
+# Capturar el video del dron
 while True:
-    ret, frame = cap.read()
-    if not ret:
+    frame = tello.get_frame_read().frame
+    if frame is None:
         break
 
     # Realiza la detección pasando el frame al modelo
@@ -27,5 +33,9 @@ while True:
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
-cap.release()
+# Detener la transmisión de video y liberar recursos
+tello.streamoff()
+tello.end()
+# Cerrar todas las ventanas de OpenCV
 cv2.destroyAllWindows()
+# Finalizar la conexión con el dron
