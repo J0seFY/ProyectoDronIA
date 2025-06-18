@@ -21,7 +21,9 @@ while True:
         break
 
     # Realiza la detección pasando el frame al modelo
-    results = model(frame)
+    frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+    results = model(frame_rgb)
 
     # Dibuja las cajas y etiquetas en el frame
     annotated_frame = results[0].plot()
